@@ -2,6 +2,7 @@ Capybara::SpecHelper.spec Capybara::Window, requires: [:windows] do
   before(:each) do
     @window = @session.current_window
     @session.visit('/with_windows')
+    expect(@session).to have_button('Open new window')
   end
   after(:each) do
     (@session.windows - [@window]).each do |w|
