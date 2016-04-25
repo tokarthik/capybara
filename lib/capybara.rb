@@ -129,7 +129,10 @@ module Capybara
     # @param [Symbol] name    The name of the selector to add
     # @yield                  A block executed in the context of the new {Capybara::Selector}
     #
-    def add_selector(name, &block)
+    def add_selector(name, options={}, &block)
+      if Capybara::Selector.all.has_key?(name.to_sym)
+        warn "Replacing existing Selector (#{name}) - pass replace: true option if you mean to do this"
+      end unless options[:replace]
       Capybara::Selector.add(name, &block)
     end
 
@@ -147,7 +150,11 @@ module Capybara
     # @yield                  A block executed in the context of the existing {Capybara::Selector}
     #
     def modify_selector(name, &block)
-      Capybara::Selector.update(name, &block)
+      if Capybara::Selector.all.has_key?(name.to_sym)
+        Capybara::Selector.update(name, &block)
+      else
+        warn "Attempt to modify a Selector (#{name}) that doesn't exist - skipping"
+      end
     end
 
     def drivers

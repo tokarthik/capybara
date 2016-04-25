@@ -2,7 +2,7 @@
 require 'spec_helper'
 
 RSpec.describe Capybara do
-  describe 'Selectors' do
+  describe 'Selectors', selectors: true do
     let :string do
       Capybara.string <<-STRING
         <html>
@@ -38,7 +38,7 @@ RSpec.describe Capybara do
     end
 
     before do
-      Capybara.add_selector :custom_selector do
+      Capybara.add_selector :custom_selector, replace: true do
         css { |css_class| "div.#{css_class}" }
         filter(:not_empty, boolean: true, default: true, skip_if: :all) { |node, value| value ^ (node.text == '') }
       end
@@ -62,6 +62,25 @@ RSpec.describe Capybara do
         expect(string).to have_selector(:custom_selector, 'b', count: 1)
         expect(string).to have_selector(:custom_selector, 'b', not_empty: false, count: 1)
         expect(string).to have_selector(:custom_selector, 'b', not_empty: :all, count: 2)
+      end
+    end
+
+    describe "add_selector" do
+      it "warns when overwriting a selector" do
+        expect_any_instance_of(Kernel).to receive(:warn).
+          with('Replacing existing Selector (custom_selector) - pass replace: true option if you mean to do this')
+
+        Capybara.add_selector :custom_selector do
+            css { |id| "##{id}" }
+        end
+      end
+
+      it "doesn't warn if replace: true option is passed" do
+        expect_any_instance_of(Kernel).not_to receive(:warn)
+
+        Capybara.add_selector :custom_selector, replace: true do
+            css { |id| "##{id}" }
+        end
       end
     end
 

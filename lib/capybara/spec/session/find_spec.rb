@@ -96,7 +96,7 @@ Capybara::SpecHelper.spec '#find' do
 
   context "with custom selector" do
     it "should use the custom selector" do
-      Capybara.add_selector(:beatle) do
+      Capybara.add_selector(:beatle, replace: true) do
         xpath { |name| ".//*[@id='#{name}']" }
       end
       expect(@session.find(:beatle, 'john').text).to eq('John')
@@ -104,9 +104,9 @@ Capybara::SpecHelper.spec '#find' do
     end
   end
 
-  context "with custom selector with :for option" do
-    it "should use the selector when it matches the :for option" do
-      Capybara.add_selector(:beatle) do
+  context "with custom selector with :match option" do
+    it "should use the selector when it matches the :match option" do
+      Capybara.add_selector(:beatle, replace: true) do
         xpath { |num| ".//*[contains(@class, 'beatle')][#{num}]" }
         match { |value| value.is_a?(Fixnum) }
       end
@@ -119,7 +119,7 @@ Capybara::SpecHelper.spec '#find' do
 
   context "with custom selector with custom filter" do
     before do
-      Capybara.add_selector(:beatle) do
+      Capybara.add_selector(:beatle, replace: true) do
         xpath { |name| ".//li[contains(@class, 'beatle')][contains(text(), '#{name}')]" }
         filter(:type) { |node, type| node[:class].split(/\s+/).include?(type) }
       end
@@ -143,7 +143,7 @@ Capybara::SpecHelper.spec '#find' do
 
   context "with custom selector with custom filter and default" do
     before do
-      Capybara.add_selector(:beatle) do
+      Capybara.add_selector(:beatle, replace: true) do
         xpath { |name| ".//li[contains(@class, 'beatle')][contains(text(), '#{name}')]" }
         filter(:type, :default => "drummer") { |node, type| node[:class].split(/\s+/).include?(type) }
       end
