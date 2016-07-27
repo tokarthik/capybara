@@ -50,7 +50,7 @@ before_install:
     fi
   - if [ $GECKODRIVER ]; then
       GECKODRIVER_URL="https://github.com/mozilla/geckodriver/releases/download/v0.9.0/geckodriver-v0.9.0-linux64.tar.gz";
-      FILE=`mktemp`; wget "$GECKODRIVER_URL" -qO $FILE && tar xfz $FILE geckodriver; rm $FILE; chmod 777 ~/geckodriver;
+      FILE=`mktemp`; wget "$GECKODRIVER_URL" -qO $FILE && tar xz -C ~ -f $FILE geckodriver; rm $FILE; chmod 777 ~/geckodriver;
     fi
 before_script:
   - export DISPLAY=:99.0
