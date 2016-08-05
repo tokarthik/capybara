@@ -1,5 +1,23 @@
 # frozen_string_literal: true
+module Selenium
+  module WebDriver
+    class Element
+    end
+  end
+end
+
+module ValueFix
+  refine ::Selenium::WebDriver::Element do
+    def value
+      bridge.element_value @id
+    end
+  end
+end
+
+using ValueFix
+
 class Capybara::Selenium::Node < Capybara::Driver::Node
+
   def visible_text
     # Selenium doesn't normalize Unicode whitespace.
     Capybara::Helpers.normalize_whitespace(native.text)
@@ -18,9 +36,9 @@ class Capybara::Selenium::Node < Capybara::Driver::Node
 
   def value
     if tag_name == "select" and multiple?
-      native.find_elements(:xpath, ".//option").select { |n| n.selected? }.map { |n| n[:value] || n.text }
+      native.find_elements(:xpath, ".//option").select { |n| n.selected? }.map { |n| n.value || n.text }
     else
-      native[:value]
+      native.value
     end
   end
 
